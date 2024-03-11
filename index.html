@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Yapım İşleri İçin Fiyat Farkları Hesabı</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+            <style>
+                ul li{
+                    padding:5px;
+                }
+
+                #selectedFile {
+                    display: none;
+                    
+                }
+
+                .navbar-brand{
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 16px;
+                    font-style: italic;
+
+                }
+
+                .navbar-nav{
+                    font-family: 'Courier New', Courier, monospace;
+                }
+
+
+                @media print {
+
+                    #menuButtons,.navbar {
+                        display: none;
+                    }
+                    
+                }
+            </style>
+
+
+    </head>
+    <body onload="loadFiles()">
+
+        <div class="container-fluid">
+
+            <nav class="navbar navbar-expand-lg bg-light m-0 p-0">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="#">Bülent MAÇKA<br>İnşaat Mühendisi</a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a id="createFileButton" class="nav-link active d-inline" aria-current="page" href="#">Yeni Dosya</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a id="filesButton" class="nav-link active d-none" aria-current="page" href="#">Dosyalar</a>
+                    </li>
+
+                      <li class="nav-item">
+                        <a id="fileButton" class="nav-link d-none" aria-current="page" href="#">Genel Bilgiler</a>
+                      </li>
+                      <li class="nav-item">
+                        <a id="allowanceButton" class="nav-link d-none" href="#">Ödenekler</a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a id="spendingButton" class="nav-link d-none" href="#">Hakedişler</a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a id="bButton" class="nav-link d-none" href="#">B Katsayıları</a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a id="calcButton" class="nav-link d-none" href="#">Hesapla</a>
+                      </li>
+  
+                    </ul>
+
+                  </div>
+                </div>
+            </nav>
+
+
+            <div id="allFiles" class="container-fluid">     
+
+                <div class="row my-2">
+                    <div class="col-12">
+                        <button id="downloadButton" class="btn btn-primary btn-sm">
+                                İndir
+                        </button>
+                    </div>
+                </div>
+
+                <table class="table table-sm table-striped">
+                    
+                        <tbody>
+
+                        </tbody>
+
+                </table>
+
+            </div>                     
+
+            <div id="selectedFile" class="selectedFile">
+
+                <div class="row">
+                    <div class="col-12">
+                        <p id="menuTitle" class="text-secondary m-0 p-0" style="font-size: 18px;  font-family: 'Courier New', Courier, monospace;">
+                            Genel Bilgiler
+                        </p>
+                    </div>
+                </div>
+
+                <div id="containerFile">             
+                    <table class="table table-sm mt-1">
+    
+                        <tbody>
+
+                                <tr class="row m-0">
+                                    <td class="col-12">Dosya Adı</td>
+                                </tr>
+
+                                <tr class="row m-0">
+                                    <td class="col-12">
+                                        <input type="text" name="filename" id="filename" class="w-100">
+                                    </td>
+                                </tr>
+    
+                                <tr class="row m-0">
+    
+                                    <td class="col-4"><b>İhale Ayı</b></td>
+    
+                                    <td class="col-8 text-end">
+                                        <select name="ihaleYear" id="ihaleYear">
+    
+                                        </select>
+                                        <!--<input type="number" name="ihaleYear" id="ihaleYear" class="text-center" style="width:100px;">-->
+                                        <select name="ihaleMonth" id="ihaleMonth">
+                                            <option value="1">Ocak</option>
+                                            <option value="2">Şubat</option>
+                                            <option value="3">Mart</option>
+                                            <option value="4">Nisan</option>
+                                            <option value="5">Mayıs</option>
+                                            <option value="6">Haziran</option>
+                                            <option value="7">Temmuz</option>
+                                            <option value="8">Ağustos</option>
+                                            <option value="9">Eylül</option>
+                                            <option value="10">Ekim</option>
+                                            <option value="11">Kasım</option>
+                                            <option value="12">Aralık</option>
+                                        </select>
+                                    </td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-12" colspan="2">
+                                        <b>Ağırlık Oranları</b>
+                                    </td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">a- İşçilik</td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number"  name="tbA" id="tbA" value="0.0000" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">b1- Metalik olmayan diğer mineral ürünleri</td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number" name="tbB1" id="tbB1" value="0.0000" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">b2- Demir ve çelik ürünleri</td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number" name="tbB2" id="tbB2" value="0.0000" max="1" min="0" class="w-100 text-end" ></td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">b3- Katı veya sıvı yakıtlar</td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number" name="tbB3" id="tbB3" value="0.0000" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">b4- Ağaç ve mantar ürünleri </td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number" name="tbB4" id="tbB4" value="0.0000" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">b5- Diğer malzemeler</td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number" name="tbB5" id="tbB5" value="1.0000" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+    
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12 px-5">c- Makine ve ekipmana ait amortisman</td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number" name="tbC" id="tbC" value="0.0000" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+
+                                <tr class="row m-0">
+                                    <td class="col-lg-11 col-sm-12"> <b>B Katsayısı</b> </td>
+                                    <td class="col-lg-1 col-sm-12 text-end"><input type="number"  name="tbB" id="tbB" value="0.90" max="1" min="0" class="w-100 text-end"></td>
+                                </tr>
+    
+    
+                        </tbody>
+    
+    
+                    </table>
+                </div>
+    
+    
+                <div id="containerAllowance" class="mt-1" style="display: none;">
+    
+                    <div class="row">
+                        <div class="col-12">
+                            Bşlangıç Ayı / Bitiş Ayı
+                        </div>
+                    </div>
+    
+                    <div class="row">
+    
+                        <div class="col-12">
+                            
+                            <select name="startYear" id="startYear">
+    
+                            </select>
+                            <select name="startMonth" id="startMonth">
+                                <option value="1">Ocak</option>
+                                <option value="2">Şubat</option>
+                                <option value="3">Mart</option>
+                                <option value="4">Nisan</option>
+                                <option value="5">Mayıs</option>
+                                <option value="6">Haziran</option>
+                                <option value="7">Temmuz</option>
+                                <option value="8">Ağustos</option>
+                                <option value="9">Eylül</option>
+                                <option value="10">Ekim</option>
+                                <option value="11">Kasım</option>
+                                <option value="12">Aralık</option>
+                            </select>  
+                            
+                            /
+    
+                            <select name="endYear" id="endYear">
+    
+                            </select>
+                            <select name="endMonth" id="endMonth">
+                                <option value="1">Ocak</option>
+                                <option value="2">Şubat</option>
+                                <option value="3">Mart</option>
+                                <option value="4">Nisan</option>
+                                <option value="5">Mayıs</option>
+                                <option value="6">Haziran</option>
+                                <option value="7">Temmuz</option>
+                                <option value="8">Ağustos</option>
+                                <option value="9">Eylül</option>
+                                <option value="10">Ekim</option>
+                                <option value="11">Kasım</option>
+                                <option value="12">Aralık</option>
+                            </select>
+    
+    
+    
+                        </div>
+    
+                    </div>
+    
+                        <div class="row mt-2">
+                            <div class="col-12">
+    
+                                <button id="apply" class="btn btn-primary btn-sm">Ekle</button>
+    
+                                <button id="deleteRowButton" class="btn btn-danger btn-sm">Sil (Son ay)</button>
+    
+                                <button id="deleteRowsButton" class="btn btn-danger btn-sm">Sil (Tümü)</button>
+    
+                            </div>
+                        </div>
+    
+    
+                    <table class="table table-striped table-sm mt-3 table-bordered">
+    
+                        <tbody id="allowances">
+    
+                        </tbody>
+    
+                    </table>
+    
+    
+    
+    
+    
+                </div>
+    
+                <div id="containerFF" class="mt-1" style="display:none">    
+                    
+                        <div class="row">
+                            <div class="col-12">
+                                İşin adı: <span id="printName"></span>
+                            </div>
+                        </div>
+
+    
+                        <table class="table table-bordered table-sm">
+    
+                            <tbody>
+    
+                            </tbody>
+    
+                        </table>
+    
+                    
+    
+                </div>
+
+            </div>
+
+            
+
+
+        </div>
+
+        
+
+        <script>        
+
+        const createFileButton = document.querySelector('#createFileButton')
+        const filesButton = document.querySelector('#filesButton')
+        const fileButton = document.querySelector('#fileButton')
+        const allowanceButton = document.querySelector('#allowanceButton')
+        const spendingButton = document.querySelector('#spendingButton')
+        const bButton = document.querySelector('#bButton')
+        const calcButton = document.querySelector('#calcButton')
+        const detailButton = document.querySelector('#detailButton')
+        const icmalButton = document.querySelector('#icmalButton')
+        const saveButton = document.querySelector('#saveButton')
+        const deleteRowButton = document.querySelector('#deleteRowButton')
+        const deleteRowsButton = document.querySelector('#deleteRowsButton')
+        const downloadButton = document.querySelector('#downloadButton')
+
+
+        const allFiles= document.querySelector('#allFiles')
+        const selectedFile= document.querySelector('#selectedFile')
+
+        const containerFile = document.querySelector('#containerFile')
+        const containerAllowance = document.querySelector('#containerAllowance')
+        const containerFF= document.querySelector('#containerFF')
+        //const containerDetailFF= document.querySelector('#containerFFDetail')
+        //const containerIcmalFF= document.querySelector('#containerFFIcmal')
+        //const viewButtons= document.querySelector('#viewButtons')
+
+        const ihaleYear = document.querySelector('#ihaleYear')
+        const ihaleMonth = document.querySelector('#ihaleMonth')
+        const startYear= document.querySelector('#startYear')
+        const startMonth = document.querySelector('#startMonth')
+        const endYear = document.querySelector('#endYear')
+        const endMonth = document.querySelector('#endMonth')
+
+        const nowYear = new Date().getFullYear()
+        let yearsHtml=''
+        for (let y=nowYear;y>=2015;y--){
+            yearsHtml += `<option>${y}</option>`
+        }
+
+        ihaleYear.innerHTML = yearsHtml
+        startYear.innerHTML = yearsHtml
+        endYear.innerHTML = yearsHtml
+
+        
+
+
+        filesButton.addEventListener('click',()=>{             
+
+                allFiles.style.display = 'block'
+                selectedFile.style.display = 'none'
+
+                showOrHideMenuButtons(1)
+
+                loadFiles()
+                     
+        })
+
+        downloadButton.addEventListener('click',e => DownloadFiles())
+
+        createFileButton.addEventListener('click', e => createFile())
+
+        fileButton.addEventListener('click',()=>{
+
+            document.querySelector('#menuTitle').innerText = 'Genel Bilgiler'
+            
+            containerFile.style.display = 'block'
+            containerAllowance.style.display = 'none'
+            containerFF.style.display = 'none'        
+        })
+
+        allowanceButton.addEventListener('click',()=>{
+
+            document.querySelector('#menuTitle').innerText = 'Ödenekler'
+            
+            containerFile.style.display = 'none'
+            containerAllowance.style.display = 'block'
+            containerFF.style.display = 'none'
+            amountType = 'allowance'
+            showColumn(amountType)
+
+            //setInputFormat()
+        
+        })
+
+        spendingButton.addEventListener('click',()=>{
+
+            document.querySelector('#menuTitle').innerText = 'Hakedişler'
+            
+            containerFile.style.display = 'none'
+            containerAllowance.style.display = 'block'
+            containerFF.style.display = 'none'
+            amountType = 'spending'
+            showColumn(amountType)
+
+            //setInputFormat()
+        
+        })
+
+        bButton.addEventListener('click',()=>{
+
+            document.querySelector('#menuTitle').innerText = 'B Katsayısı'
+            
+            containerFile.style.display = 'none'
+            containerAllowance.style.display = 'block'
+            containerFF.style.display = 'none'
+            amountType = 'B'
+            showColumn(amountType)
+
+            //setInputFormat()
+        
+        })
+
+    const apply = document.querySelector('#apply')
+
+    apply.addEventListener('click',() => {
+        createAllowances(
+            parseInt(startYear.value),
+            parseInt(startMonth.value),
+            parseInt(endYear.value),
+            parseInt(endMonth.value)
+        )
+
+        //console.log(startYear.value,startMonth.value,endYear.value,endMonth.value)
+
+    })
+
+    deleteRowButton.addEventListener('click',()=>{
+        deleteLastRow()
+    })
+
+    deleteRowsButton.addEventListener('click',()=>{
+        deleteAllRows()
+    })
+
+    
+
+    calcButton.addEventListener('click',(e)=>{        
+
+        document.querySelector('#menuTitle').innerText = 'Hesap Raporu'
+
+        const file = JSON.parse(e.target.getAttribute('file'))
+
+        saveToIndexedDb(parseInt(file.id))
+
+        const containerAllowance = document.querySelector('#containerAllowance')
+        const table = containerAllowance.querySelector('table')
+        const tbody = table.querySelector('tbody')
+        const rows = tbody.querySelectorAll('tr')
+
+        const data = {  
+                        file:{      a:file.a,
+                                    b1:file.b1,
+                                    b2:file.b2,
+                                    b3:file.b3,
+                                    b4:file.b4,
+                                    b5:file.b5,
+                                    c:file.c,
+                                    B:file.B,
+                                    baseYear:file.ihaleYear,
+                                    baseMonth:file.ihaleMonth
+                            },
+                            spendings:[],
+                            allowances:[]                        
+                      }
+
+        Array.from(rows).map(row => {
+            const year = parseInt(row.getAttribute('year'))
+            const month = parseInt(row.getAttribute('month'))
+            //const allowance = parseFloat(row.querySelectorAll('td')[1].querySelector('input').value.split('.').join(''))
+            const allowanceSplit = row.querySelectorAll('td')[1].querySelector('input').value.split(',')
+            const allowance = parseFloat(allowanceSplit[0].split('.').join('') + '.' + allowanceSplit[1])  
+            //const spending = parseFloat(row.querySelectorAll('td')[2].querySelector('input').value.split('.').join(''))
+            const spendingSplit = row.querySelectorAll('td')[2].querySelector('input').value.split(',')
+            const spending = parseFloat(spendingSplit[0].split('.').join('') + '.' + spendingSplit[1])
+
+            const BSplit = row.querySelectorAll('td')[3].querySelector('input').value.split(',')
+            const B = parseFloat(BSplit[0].split('.').join('') + '.' + BSplit[1])            
+
+            data.spendings.push({year:year,month:month,amount:spending,B:B})
+            data.allowances.push({year:year,month:month,amount:allowance,spending:0.0})
+        })
+
+ 
+
+            containerFile.style.display = 'none'
+            containerAllowance.style.display = 'none'
+            containerFF.style.display = 'block'
+            
+            //viewButtons.style.display = 'block'
+
+        calcPd(data)        
+    })
+
+   
+
+</script>
+
+        <script src="app.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>   
+
+    </body>
+</html>
